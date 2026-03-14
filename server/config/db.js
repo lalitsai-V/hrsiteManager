@@ -16,4 +16,4 @@ async function getDb() {
   return supabase;
 }
 
-module.exports = { supabase, getDb, supabaseUrl, supabaseKey };
+module.exports = { supabase, getDb };

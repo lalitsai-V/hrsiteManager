@@ -35,6 +35,16 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'Veera Group Employee Manager API is running' });
 });
 
+// Diagnostic route
+app.get('/api/debug', (req, res) => {
+  res.json({
+    supabaseUrlSet: !!process.env.SUPABASE_URL,
+    supabaseKeySet: !!process.env.SUPABASE_ANON_KEY,
+    nodeEnv: process.env.NODE_ENV,
+    port: process.env.PORT
+  });
+});
+
 // Root route
 app.get('/', (req, res) => {
   res.send('Veera Group Employee Manager API is running. Please use the frontend on port 5173.');

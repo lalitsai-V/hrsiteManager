@@ -1,17 +1,13 @@
-const { supabase, supabaseUrl, supabaseKey } = require('../config/db');
+const { supabase } = require('../config/db');
 const { generateEmployeeId } = require('../utils/employeeIdGenerator');
 
 // Helper to upload photo to Supabase Storage
 const uploadPhoto = async (file) => {
   if (!file) return null;
-  
+
   const fileExt = file.originalname.split('.').pop();
   const fileName = `${Date.now()}.${fileExt}`;
   const filePath = `photos/${fileName}`;
-
-  if (!supabaseUrl || !supabaseKey) {
-    throw new Error('SUPABASE_URL or SUPABASE_ANON_KEY is missing. Check your Vercel Environment Variables.');
-  }
 
   const { data, error } = await supabase.storage
     .from('employees')
@@ -21,11 +17,8 @@ const uploadPhoto = async (file) => {
     });
 
   if (error) {
-    console.error('Full Supabase Error:', error);
-    if (error.message.includes('bucket not found') || error.error === 'no_bucket') {
-      throw new Error('Storage bucket "employees" not found. Please create it in your Supabase dashboard.');
-    }
-    throw new Error(`Supabase Storage Error: ${error.message}`);
+    console.error('Detailed Supabase Storage Error:', JSON.stringify(error, null, 2));
+    throw new Error(`Supabase Storage Error: ${error.message} (Bucket: employees, Path: ${filePath})`);
   }
 
   const { data: { publicUrl } } = supabase.storage
@@ -39,7 +32,7 @@ const uploadPhoto = async (file) => {
 exports.getAllEmployees = async (req, res) => {
   try {
     const { search, department, status } = req.query;
-    
+
     let query = supabase.from('employees').select('*');
 
     if (search) {
@@ -55,7 +48,7 @@ exports.getAllEmployees = async (req, res) => {
     query = query.order('id', { ascending: false });
 
     const { data: employees, error } = await query;
-    
+
     if (error) throw error;
     res.json(employees);
   } catch (error) {
@@ -112,12 +105,12 @@ exports.createEmployee = async (req, res) => {
       .from('employees')
       .insert([
         {
-          employee_id, full_name, photo, email, phone: phone || '', 
+          employee_id, full_name, photo, email, phone: phone || '',
           company_name, department: department || '',
-          designation: designation || '', date_of_joining: date_of_joining || '', 
-          aadhaar_number: aadhaar_number || '', pan_number: pan_number || '', 
-          bank_name: bank_name || '', ifsc_code: ifsc_code || '', 
-          branch_name: branch_name || '', account_number: account_number || '', 
+          designation: designation || '', date_of_joining: date_of_joining || '',
+          aadhaar_number: aadhaar_number || '', pan_number: pan_number || '',
+          bank_name: bank_name || '', ifsc_code: ifsc_code || '',
+          branch_name: branch_name || '', account_number: account_number || '',
           salary: parseFloat(salary) || 0, status: status || 'Active'
         }
       ])
@@ -127,7 +120,15 @@ exports.createEmployee = async (req, res) => {
     if (error) throw error;
     res.status(201).json({ message: 'Employee created successfully', employee: newEmployee });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ 
+      message: 'Server Error during employee creation', 
+      error: error.message,
+      debug: {
+        hasUrl: !!process.env.SUPABASE_URL,
+        hasKey: !!process.env.SUPABASE_ANON_KEY,
+        env: process.env.NODE_ENV
+      }
+    });
   }
 };
 
@@ -155,22 +156,22 @@ exports.updateEmployee = async (req, res) => {
     const { data: updatedEmployee, error } = await supabase
       .from('employees')
       .update({
-        full_name: full_name || currentEmployee.full_name, 
-        photo, 
+        full_name: full_name || currentEmployee.full_name,
+        photo,
         email: email || currentEmployee.email,
-        phone: phone || currentEmployee.phone, 
+        phone: phone || currentEmployee.phone,
         company_name: company_name || currentEmployee.company_name,
-        department: department || currentEmployee.department, 
+        department: department || currentEmployee.department,
         designation: designation || currentEmployee.designation,
-        date_of_joining: date_of_joining || currentEmployee.date_of_joining, 
+        date_of_joining: date_of_joining || currentEmployee.date_of_joining,
         aadhaar_number: aadhaar_number || currentEmployee.aadhaar_number,
-        pan_number: pan_number || currentEmployee.pan_number, 
-        bank_name: bank_name || currentEmployee.bank_name, 
-        ifsc_code: ifsc_code || currentEmployee.ifsc_code, 
+        pan_number: pan_number || currentEmployee.pan_number,
+        bank_name: bank_name || currentEmployee.bank_name,
+        ifsc_code: ifsc_code || currentEmployee.ifsc_code,
         branch_name: branch_name || currentEmployee.branch_name,
-        account_number: account_number || currentEmployee.account_number, 
+        account_number: account_number || currentEmployee.account_number,
         salary: salary != null ? parseFloat(salary) : currentEmployee.salary,
-        status: status || currentEmployee.status, 
+        status: status || currentEmployee.status,
         updated_at: new Date().toISOString()
       })
       .eq('id', parseInt(req.params.id))
