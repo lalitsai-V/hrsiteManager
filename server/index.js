@@ -35,6 +35,11 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'Veera Group Employee Manager API is running' });
 });
 
+// Root route
+app.get('/', (req, res) => {
+  res.send('Veera Group Employee Manager API is running. Please use the frontend on port 5173.');
+});
+
 // Initialize DB then start server
 if (process.env.NODE_ENV !== 'production') {
   async function start() {
