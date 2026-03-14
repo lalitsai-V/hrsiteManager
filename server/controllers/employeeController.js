@@ -1,6 +1,34 @@
 const { supabase } = require('../config/db');
 const { generateEmployeeId } = require('../utils/employeeIdGenerator');
 
+// Helper to upload photo to Supabase Storage
+const uploadPhoto = async (file) => {
+  if (!file) return null;
+  
+  const fileExt = file.originalname.split('.').pop();
+  const fileName = `${Date.now()}.${fileExt}`;
+  const filePath = `photos/${fileName}`;
+
+  const { data, error } = await supabase.storage
+    .from('employees')
+    .upload(filePath, file.buffer, {
+      contentType: file.mimetype,
+      upsert: true
+    });
+
+  if (error) {
+    console.error('Supabase Storage Error:', error);
+    // If bucket doesn't exist, this might fail. We should ideally create it or advise the user.
+    throw new Error('Failed to upload photo to storage. Ensure "employees" bucket exists in Supabase.');
+  }
+
+  const { data: { publicUrl } } = supabase.storage
+    .from('employees')
+    .getPublicUrl(filePath);
+
+  return publicUrl;
+};
+
 // Get all employees with optional search and filter
 exports.getAllEmployees = async (req, res) => {
   try {
@@ -72,7 +100,7 @@ exports.createEmployee = async (req, res) => {
     }
 
     const employee_id = await generateEmployeeId(company_name);
-    const photo = req.file ? `/uploads/${req.file.filename}` : null;
+    const photo = await uploadPhoto(req.file);
 
     const { data: newEmployee, error } = await supabase
       .from('employees')
@@ -116,7 +144,7 @@ exports.updateEmployee = async (req, res) => {
       branch_name, account_number, salary, status
     } = req.body;
 
-    const photo = req.file ? `/uploads/${req.file.filename}` : currentEmployee.photo;
+    const photo = req.file ? await uploadPhoto(req.file) : currentEmployee.photo;
 
     const { data: updatedEmployee, error } = await supabase
       .from('employees')

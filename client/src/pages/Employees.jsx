@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
   getEmployees, createEmployee, updateEmployee, deleteEmployee,
-  exportExcel, exportPDF
+  exportExcel, exportPDF, getBaseUrl
 } from '../services/api';
 import { FiPlus, FiEdit2, FiTrash2, FiDownload, FiSearch, FiX } from 'react-icons/fi';
 
@@ -195,7 +195,11 @@ export default function Employees() {
                 <td><strong>{emp.employee_id}</strong></td>
                 <td>
                   {emp.photo ? (
-                    <img src={`http://localhost:5000${emp.photo}`} alt="" className="employee-avatar" />
+                    <img 
+                      src={emp.photo.startsWith('http') ? emp.photo : `${getBaseUrl()}${emp.photo}`} 
+                      alt="" 
+                      className="employee-avatar" 
+                    />
                   ) : (
                     <div className="employee-avatar-placeholder">
                       {emp.full_name?.charAt(0)?.toUpperCase()}

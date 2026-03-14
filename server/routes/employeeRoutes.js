@@ -6,16 +6,12 @@ const employeeController = require('../controllers/employeeController');
 const exportController = require('../controllers/exportController');
 const { authMiddleware } = require('../middleware/auth');
 
-// Multer config for photo uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '..', 'uploads'));
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
-  }
+// Multer config for photo uploads - Use memory storage for Vercel compatibility
+const storage = multer.memoryStorage();
+const upload = multer({ 
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
 });
-const upload = multer({ storage });
 
 // Employee CRUD routes
 router.get('/', authMiddleware, employeeController.getAllEmployees);
