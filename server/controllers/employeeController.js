@@ -17,8 +17,9 @@ const uploadPhoto = async (file) => {
     });
 
   if (error) {
-    console.error('Detailed Supabase Storage Error:', JSON.stringify(error, null, 2));
-    throw new Error(`Supabase Storage Error: ${error.message} (Bucket: employees, Path: ${filePath})`);
+    console.error('Supabase Storage Error:', error);
+    // If bucket doesn't exist, this might fail. We should ideally create it or advise the user.
+    throw new Error('Failed to upload photo to storage. Ensure "employees" bucket exists in Supabase.');
   }
 
   const { data: { publicUrl } } = supabase.storage
@@ -120,15 +121,7 @@ exports.createEmployee = async (req, res) => {
     if (error) throw error;
     res.status(201).json({ message: 'Employee created successfully', employee: newEmployee });
   } catch (error) {
-    res.status(500).json({ 
-      message: 'Server Error during employee creation', 
-      error: error.message,
-      debug: {
-        hasUrl: !!process.env.SUPABASE_URL,
-        hasKey: !!process.env.SUPABASE_ANON_KEY,
-        env: process.env.NODE_ENV
-      }
-    });
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 
