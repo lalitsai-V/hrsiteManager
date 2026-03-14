@@ -249,66 +249,66 @@ export default function Employees() {
                 <div className="form-grid">
                   <div className="form-group">
                     <label>Full Name *</label>
-                    <input type="text" value={form.full_name} onChange={(e) => setForm({...form, full_name: e.target.value})} required />
+                    <input type="text" value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} required />
                   </div>
                   <div className="form-group">
                     <label>Email *</label>
-                    <input type="email" value={form.email} onChange={(e) => setForm({...form, email: e.target.value})} required />
+                    <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required />
                   </div>
                   <div className="form-group">
                     <label>Phone</label>
-                    <input type="text" value={form.phone} onChange={(e) => setForm({...form, phone: e.target.value})} />
+                    <input type="text" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
                   </div>
                   <div className="form-group">
                     <label>Company Name *</label>
-                    <input type="text" value={form.company_name} onChange={(e) => setForm({...form, company_name: e.target.value})} required />
+                    <input type="text" value={form.company_name} onChange={(e) => setForm({ ...form, company_name: e.target.value })} required />
                   </div>
                   <div className="form-group">
                     <label>Department</label>
-                    <select value={form.department} onChange={(e) => setForm({...form, department: e.target.value})}>
+                    <select value={form.department} onChange={(e) => setForm({ ...form, department: e.target.value })}>
                       <option value="">Select Department</option>
                       {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
                     </select>
                   </div>
                   <div className="form-group">
                     <label>Designation</label>
-                    <input type="text" value={form.designation} onChange={(e) => setForm({...form, designation: e.target.value})} />
+                    <input type="text" value={form.designation} onChange={(e) => setForm({ ...form, designation: e.target.value })} />
                   </div>
                   <div className="form-group">
                     <label>Date of Joining</label>
-                    <input type="date" value={form.date_of_joining} onChange={(e) => setForm({...form, date_of_joining: e.target.value})} />
+                    <input type="date" value={form.date_of_joining} onChange={(e) => setForm({ ...form, date_of_joining: e.target.value })} />
                   </div>
                   <div className="form-group">
                     <label>Salary</label>
-                    <input type="number" value={form.salary} onChange={(e) => setForm({...form, salary: e.target.value})} />
+                    <input type="number" value={form.salary} onChange={(e) => setForm({ ...form, salary: e.target.value })} />
                   </div>
                   <div className="form-group">
                     <label>Aadhaar Number</label>
-                    <input type="text" value={form.aadhaar_number} onChange={(e) => setForm({...form, aadhaar_number: e.target.value})} />
+                    <input type="text" value={form.aadhaar_number} onChange={(e) => setForm({ ...form, aadhaar_number: e.target.value })} />
                   </div>
                   <div className="form-group">
                     <label>PAN Number</label>
-                    <input type="text" value={form.pan_number} onChange={(e) => setForm({...form, pan_number: e.target.value})} />
+                    <input type="text" value={form.pan_number} onChange={(e) => setForm({ ...form, pan_number: e.target.value })} />
                   </div>
                   <div className="form-group">
                     <label>Bank Name</label>
-                    <input type="text" value={form.bank_name} onChange={(e) => setForm({...form, bank_name: e.target.value})} />
+                    <input type="text" value={form.bank_name} onChange={(e) => setForm({ ...form, bank_name: e.target.value })} />
                   </div>
                   <div className="form-group">
                     <label>IFSC Code</label>
-                    <input type="text" value={form.ifsc_code} onChange={(e) => setForm({...form, ifsc_code: e.target.value})} />
+                    <input type="text" value={form.ifsc_code} onChange={(e) => setForm({ ...form, ifsc_code: e.target.value })} />
                   </div>
                   <div className="form-group">
                     <label>Branch Name</label>
-                    <input type="text" value={form.branch_name} onChange={(e) => setForm({...form, branch_name: e.target.value})} />
+                    <input type="text" value={form.branch_name} onChange={(e) => setForm({ ...form, branch_name: e.target.value })} />
                   </div>
                   <div className="form-group">
                     <label>Account Number</label>
-                    <input type="text" value={form.account_number} onChange={(e) => setForm({...form, account_number: e.target.value})} />
+                    <input type="text" value={form.account_number} onChange={(e) => setForm({ ...form, account_number: e.target.value })} />
                   </div>
                   <div className="form-group">
                     <label>Status</label>
-                    <select value={form.status} onChange={(e) => setForm({...form, status: e.target.value})}>
+                    <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })}>
                       <option value="Active">Active</option>
                       <option value="Inactive">Inactive</option>
                     </select>
