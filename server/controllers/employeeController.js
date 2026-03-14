@@ -1,4 +1,4 @@
-const { supabase } = require('../config/db');
+const { supabase, supabaseUrl, supabaseKey } = require('../config/db');
 const { generateEmployeeId } = require('../utils/employeeIdGenerator');
 
 // Helper to upload photo to Supabase Storage
@@ -9,6 +9,10 @@ const uploadPhoto = async (file) => {
   const fileName = `${Date.now()}.${fileExt}`;
   const filePath = `photos/${fileName}`;
 
+  if (!supabaseUrl || !supabaseKey) {
+    throw new Error('SUPABASE_URL or SUPABASE_ANON_KEY is missing. Check your Vercel Environment Variables.');
+  }
+
   const { data, error } = await supabase.storage
     .from('employees')
     .upload(filePath, file.buffer, {
@@ -17,9 +21,11 @@ const uploadPhoto = async (file) => {
     });
 
   if (error) {
-    console.error('Supabase Storage Error:', error);
-    // If bucket doesn't exist, this might fail. We should ideally create it or advise the user.
-    throw new Error('Failed to upload photo to storage. Ensure "employees" bucket exists in Supabase.');
+    console.error('Full Supabase Error:', error);
+    if (error.message.includes('bucket not found') || error.error === 'no_bucket') {
+      throw new Error('Storage bucket "employees" not found. Please create it in your Supabase dashboard.');
+    }
+    throw new Error(`Supabase Storage Error: ${error.message}`);
   }
 
   const { data: { publicUrl } } = supabase.storage
